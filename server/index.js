@@ -2,7 +2,9 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const { Server } = require("socket.io");
 
-const io = new Server();
+const io = new Server({
+  cors: true,
+});
 const app = express();
 
 app.use(bodyParser.json());
@@ -21,6 +23,7 @@ io.on("connection", (socket) => {
     emailToSocketMap.set(emailId, socket);
     //socket joined with the roomid
     socket.join(roomId);
+    socket.emit("joined-room", { roomId });
     //broadcast the emialid of the user that joined the room
     socket.broadcast.to(roomId).emit("user-joined", { emailId });
   });
